@@ -59,7 +59,7 @@ wtk.o: wtk.cpp
 # other non-file targets
 
 clean:
-		rm minimap2-wtk *.o
+		rm minimap2-wtk *.o -f
 		cd minimap2 && make clean
 
 wtk.o: wtk.hpp

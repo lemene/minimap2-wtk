@@ -4,7 +4,8 @@
 #include <algorithm>
 
 #include "mmpriv.h"
-
+#include <iostream>
+#include "bloom/bloom_filter.hpp"
 
 std::vector<std::string> SplitStringBySpace(const std::string &str) {
     std::vector<std::string> substrs;
@@ -49,6 +50,8 @@ uint64_t str2kmer(const std::string &str) {
     return kmer;
 }
 
+
+
 class KmerCount {
 public:
     KmerCount() {    }
@@ -72,13 +75,22 @@ public:
             std::string kmer;
 	        uint64_t cnt = 0;
 	        uint64_t freq;
-	        if (file >> kmer >> freq) {
+	        while (file >> kmer >> freq) {
+                cnt ++;
+            }
+            
+            filter_ = make_bloom(cnt);
+            file.clear();
+            file.seekg(0);
+            if (file >> kmer >> freq) {
                 k_ = kmer.size();
-                kmers_.insert(str2kmer(kmer));
+                //kmers_.insert(str2kmer(kmer));
+                filter_->insert(str2kmer(kmer));
                 cnt++;
             }
             while (file >> kmer >> freq) {
-                kmers_.insert(str2kmer(kmer));
+                //kmers_.insert(str2kmer(kmer));
+                filter_->insert(str2kmer(kmer));
 		        cnt++;
             }
             // std::string line;
@@ -99,13 +111,33 @@ public:
     }
 
     bool is_valid_kmer(uint64_t kmer) {
-        return kmers_.find(kmer) != kmers_.end();
+        return filter_->contains(kmer);
     }
 
+protected:
+    bloom_filter* make_bloom(size_t count) {
+
+        //set up bloom filter
+        bloom_parameters parameters;
+        parameters.projected_element_count = std::max<size_t>(count, (uint64_t)1000);
+        parameters.false_positive_probability = 0.001; 
+        parameters.maximum_number_of_hashes = 2;
+
+        // if (!parameters)
+        // {
+        //     std::cout << "Error - Invalid set of bloom filter parameters!" << std::endl;
+        //     exit(1);
+        // }
+
+        parameters.compute_optimal_parameters();
+        return new bloom_filter(parameters);
+
+    }
 protected:
     std::string kc_fname_;
     std::unordered_set<uint64_t> kmers_;
     uint8_t k_ { 0 };
+	bloom_filter *filter_ { nullptr };
 };
 
 static std::shared_ptr<KmerCount> s_kmer_count = std::shared_ptr<KmerCount>(new KmerCount);
