@@ -1,6 +1,6 @@
 [submodule "minimap2"]
-	path = minimap2
+	path = ext/minimap2
 	url = https://github.com/lh3/minimap2.git
 [submodule "bloom"]
-	path = bloom
+	path = ext/bloom
 	url = https://github.com/ArashPartow/bloom.git

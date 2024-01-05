@@ -5,7 +5,7 @@
 
 #include "mmpriv.h"
 #include <iostream>
-#include "bloom/bloom_filter.hpp"
+#include "../ext/bloom/bloom_filter.hpp"
 
 std::vector<std::string> SplitStringBySpace(const std::string &str) {
     std::vector<std::string> substrs;
@@ -93,19 +93,9 @@ public:
                 filter_->insert(str2kmer(kmer));
 		        cnt++;
             }
-            // std::string line;
-            // if (std::getline(file, line)) {
-            //     auto items = SplitStringBySpace(line); // kmer, count
-            //     k_ = items[0].size();
-            //     kmers_.insert(str2kmer(items[0]));
 
-            //     while (std::getline(file, line)) {
-            //         auto items = SplitStringBySpace(line); // kmer, count
-            //         //kmers_.insert(str2kmer(items[0]));
-            //     }
-            // }
             fprintf(stderr, "[M::%s::%.3f*%.2f] load kmer count %llu\n",
-                    __func__, realtime() - mm_realtime0, cputime() / (realtime() - mm_realtime0, cnt));
+                    __func__, realtime() - mm_realtime0, cputime() / (realtime() - mm_realtime0), cnt);
         } else {
         }
     }

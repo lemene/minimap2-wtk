@@ -1,9 +1,9 @@
 CFLAGS=		-g -Wall -O2 -Wc++-compat #-Wextra
 CPPFLAGS=	-DHAVE_KALLOC
-INCLUDES=	-I./minimap2
+INCLUDES=	-I../ext/minimap2
 OBJS=		
 PROG=		minimap2-wtk
-LIBS=		-lm -lz -lpthread -L./minimap2
+LIBS=		-lm -lz -lpthread -L../ext/minimap2
 
 ifneq ($(aarch64),)
 	arm_neon=1
@@ -45,13 +45,13 @@ all:$(PROG)
 
 
 
-minimap2-wtk:main.o sketch.o wtk.o minimap2/libminimap2.a
+minimap2-wtk:main.o sketch.o wtk.o ../ext/minimap2/libminimap2.a
 		#$(CC) $(CFLAGS) main.o  wtk.o  sketch.o -o $@ -L. -lminimap2 $(LIBS)
 		g++ $(CFLAGS) main.o  wtk.o  sketch.o -o $@ -L. -lminimap2 $(LIBS)
 
 
-minimap2/libminimap2.a:
-		cd minimap2 && make
+../ext/minimap2/libminimap2.a:
+		cd ../ext/minimap2 && make
 
 wtk.o: wtk.cpp
 		g++ -c $(CPPFLAGS) -std=c++11 -DKSW_SSE2_ONLY -D__SSE2__ $(INCLUDES) $< -o $@
