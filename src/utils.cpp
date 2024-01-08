@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 
+
 size_t roughly_count_lines_in_file(std::ifstream& ifs) {
     ifs.seekg(0);
 
@@ -21,58 +22,6 @@ size_t roughly_count_lines_in_file(std::ifstream& ifs) {
         return 0;
     }
 }
-
-
-template<typename W>
-void MultiThreadRun(size_t thread_size, W work_func) {
-    std::vector<std::thread> workers;
-    for (size_t i = 0; i < thread_size; ++i) {
-        workers.push_back(std::thread(work_func, i));
-    }
-    for (size_t i = 0; i < workers.size(); ++i) {
-        workers[i].join();
-    }
-}
-
-class BlockReader {
-public:
-    BlockReader(std::ifstream &ifs, char delim) : ifs_(ifs), delim_(delim) { ifs_.seekg(0); }
-
-    size_t Get(char* block, size_t bsize) {
-        size_t bindex = 0;
-        if (bufsize_ > 0) {
-            assert(bufsize_ < bsize);
-            std::copy(buf_, buf_+bufsize_, block);
-            bindex = bufsize_;
-            bufsize_ = 0;
-        }
-
-        ifs_.read(block+bindex, bsize-bindex);
-        bindex += ifs_.gcount();
-
-        if (bindex == bsize) {
-            size_t end = 0;
-            for (size_t i = 0; i < bindex; ++i) {
-                if (block[bindex-i-1] == delim_) {
-                    end = bindex - i; 
-                }
-            }
-
-            assert(bindex >= end && bufsize_ > bindex - end);
-            std::copy(block+end, block+bindex, buf_);
-            bufsize_ = bindex - end;
-            bindex = end;
-
-        }
-        return bindex;
-    }
-
-protected:
-    char buf_[1024];
-    size_t bufsize_ { 0 };
-    std::ifstream &ifs_; 
-    char delim_;
-};
 
 size_t count_lines_in_file(std::ifstream& ifs, size_t threads) {
     ifs.seekg(0);
@@ -104,7 +53,6 @@ size_t count_lines_in_file(std::ifstream& ifs, size_t threads) {
 }
 
 
-
 std::vector<std::string> SplitStringBySpace(const std::string &str) {
     std::vector<std::string> substrs;
 
@@ -122,28 +70,3 @@ std::vector<std::string> SplitStringBySpace(const std::string &str) {
     return substrs;
 }
 
-
-static inline uint64_t hash64(uint64_t key)
-{
-	key = (~key + (key << 21));
-	key = key ^ key >> 24;
-	key = ((key + (key << 3)) + (key << 8));
-	key = key ^ key >> 14;
-	key = ((key + (key << 2)) + (key << 4));
-	key = key ^ key >> 28;
-	key = (key + (key << 31));
-	return key;
-}
-
-uint8_t s_table[256];
-uint64_t shift1 = 2 * (19 - 1), mask = (1ULL<<2*19) - 1;
-
-uint64_t str2kmer(const std::string &str) {
-    
-    uint64_t kmer = 0;
-    for (auto a : str) {
-		kmer = (kmer << 2 | s_table[a]) & mask;           // forward k-mer
-
-    }
-    return kmer;
-}

@@ -35,7 +35,7 @@ ifneq ($(tsan),)
 	LIBS+=-fsanitize=thread -ldl
 endif
 
-src := test.cpp main.c 
+src := test.cpp main.c utils.cpp active_kmers.cpp wtk.cpp sketch.c 
 
 obj := $(patsubst %.cpp, %.o, $(src))
 obj := $(patsubst %.c, %.o, $(obj))
@@ -60,8 +60,8 @@ minimap2-wtk:main.o sketch.o wtk.o ../ext/minimap2/libminimap2.a
 		#$(CC) $(CFLAGS) main.o  wtk.o  sketch.o -o $@ -L. -lminimap2 $(LIBS)
 		g++ $(CFLAGS) main.o  wtk.o  sketch.o -o $@ -L. -lminimap2 $(LIBS)
 
-test: test.o 
-	g++ $(CFLAGS) test.o  -o $@ -L. $(LIBS)
+test: test.o wtk.o active_kmers.o utils.o
+	g++ $(CFLAGS) $^  -o $@ -L. $(LIBS)
 
 ../ext/minimap2/libminimap2.a:
 		cd ../ext/minimap2 && make
@@ -82,4 +82,4 @@ wtk.o: wtk.hpp
 	gcc $(CFLAGS) -c -MMD -MP -MF "$(@:%.o=%.d)" -MT "$(@:%.o=%.o)" -o "$@" "$<"
 
 %.o:%.cpp
-	g++ $(CXXFLAGS) -c -MMD -MP -MF "$(@:%.o=%.d)" -MT "$(@:%.o=%.o)" -o "$@" "$<"
+	g++ $(CXXFLAGS) -c -std=c++11 -MMD -MP -MF "$(@:%.o=%.d)" -MT "$(@:%.o=%.o)" -o "$@" "$<"

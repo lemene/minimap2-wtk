@@ -3,6 +3,8 @@
 .*.swp
 *.a
 *.o
+*.d
 *.dSYM
 minimap2-wtk
+test
 .vscode
