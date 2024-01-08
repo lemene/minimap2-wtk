@@ -86,7 +86,7 @@ static ko_longopt_t long_options[] = {
 	{ "mask-level",     ko_required_argument, 'M' },
 	{ "min-dp-score",   ko_required_argument, 's' },
 	{ "sam",            ko_no_argument,       'a' },
-	{ "kmer-count",		ko_required_argument, 363 },
+	{ "active-kmers",	ko_required_argument, 363 },
 	{ 0, 0, 0 }
 };
 
@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
 		fprintf(fp_help, "                 - splice/splice:hq - long-read/Pacbio-CCS spliced alignment\n");
 		fprintf(fp_help, "                 - sr - genomic short-read mapping\n");
 		fprintf(fp_help, "  Extra:\n");
-		fprintf(fp_help, "    --kmer-count FILE recording 'kmer<tab>count'");
+		fprintf(fp_help, "    --active-kmers FILE recording 'kmer<tab>count'");
 		fprintf(fp_help, "\nSee `man ./minimap2.1' for detailed description of these and other advanced command-line options.\n");
 		return fp_help == stdout? 0 : 1;
 	}
