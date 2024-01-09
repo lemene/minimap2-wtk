@@ -14,7 +14,7 @@ public:
 protected:
     bool load(const std::string& fname, size_t threads);
     std::shared_ptr<bloom_filter> make_bloom(size_t count);
-    static size_t actual_threads(size_t threads)  { return std::min<size_t>(threads, 10); }
+    static size_t actual_threads(size_t threads)  { return std::min<size_t>(threads, 20); }
     double weight_ { 1.0 };
     std::shared_ptr<bloom_filter> bloom_;
 };

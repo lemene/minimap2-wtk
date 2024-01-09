@@ -57,7 +57,7 @@ bool KmerGroup::load(const std::string& fname, size_t threads) {
     };
 
     auto comb_func = [this, &mutex_comb, &scount](const std::vector<uint64_t> kmers) {
-        std::lock_guard<std::mutex> lock(mutex_comb);
+        //std::lock_guard<std::mutex> lock(mutex_comb);
 
         for (auto k : kmers) {
             bloom_->insert(k);

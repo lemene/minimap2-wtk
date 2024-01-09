@@ -1,4 +1,8 @@
 #include <cstdio>
+#include <cassert>
+#include <fstream>
+#include <string>
+#include <stdint.h>
 
 #include "wtk.hpp"
 
@@ -21,6 +25,16 @@ int main(int argc, const char* argv[]) {
     }
 
     wtk_initialize(10);
+    std::ifstream ifs(argv[1]);
+    std::string kmer;
+    int freq;
+    extern uint64_t str2kmer(const std::string &str);
+    int test_cnt = 0;
+    while (ifs >> kmer >> freq) {
+        assert(wtk_is_active_kmer(str2kmer(kmer)));
+        test_cnt ++;
+    }
+    printf("test_cnt = %d\n", test_cnt);
 
     
 }
